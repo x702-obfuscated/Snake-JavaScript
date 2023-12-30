@@ -1,5 +1,6 @@
 //game settings
-var edgeWrap = false; //sets whether or not the edges cause a game over or wrap around
+var edgeWrap = true; //sets whether or not the edges cause a game over or wrap around
+var textSize = 20;
 
 //board
 const blockSize = 25;
@@ -20,7 +21,7 @@ var foodX = blockSize * 10;
 var foodY = blockSize * 10;
 
 var collision = false;
-
+var score = 0;
 
 
 
@@ -32,7 +33,7 @@ window.onload = function(){
   
   placeFood();
   document.addEventListener("keyup", changeDirection);
-  setInterval(update,1000/10);
+  setInterval(update,1000/5);
 }
 
 function gameOver(){
@@ -48,8 +49,9 @@ function update(){
     return;
   }
 
-
   drawBoard();
+  drawScore();
+  drawLocation();
   drawFood();
   checkFoodCollision();
   drawSnake();
@@ -60,6 +62,21 @@ function update(){
 function drawBoard(){
   context.fillStyle = "black";
   context.fillRect(0,0,board.width,board.height);
+
+
+}
+
+function drawLocation(){
+  context.font="20px Courier New";
+  context.fillStyle="yellow";
+  context.fillText(`snakeX: ${snakeX}`, 120, textSize)
+  context.fillText(`snakeY: ${snakeY}`, 280, textSize)
+}
+
+function drawScore(){
+  context.font="20px Courier New";
+  context.fillStyle="yellow";
+  context.fillText(`Score: ${score}`, 0, textSize)
 }
 
 function drawFood(){
@@ -79,6 +96,8 @@ function drawSnake(){
   context.fillStyle = "lime";
   snakeX += xVelocity * blockSize;
   snakeY += yVelocity * blockSize;
+
+  
   context.fillRect(snakeX,snakeY,blockSize,blockSize);
 
   for(let i = 0; i < snakeBody.length; i++){
@@ -90,6 +109,7 @@ function checkFoodCollision(){
   if(snakeX == foodX && snakeY == foodY){
     snakeBody.push([foodX,foodY])
     placeFood();
+    score++;
   }
 }
 
@@ -104,10 +124,10 @@ function checkBodyCollision(){
 function checkEdgeCollision(){
   if(edgeWrap){
     if(snakeX < 0){
-      snakeX = board.width;
+      snakeX = board.width-blockSize;
     }
     if(snakeY < 0){
-      snakeY = board.height;
+      snakeY = board.height-blockSize;
     }
     if(snakeX > board.width){
       snakeX = 0;
@@ -147,3 +167,4 @@ function placeFood(){
   foodX = Math.floor(Math.random() * cols) * blockSize;
   foodY = Math.floor(Math.random() * rows) * blockSize;
 }
+
